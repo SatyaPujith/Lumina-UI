@@ -64,10 +64,10 @@ export const Navbar = () => {
         ))}
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-1.5 sm:gap-4">
         <button
           onClick={toggleTheme}
-          className="p-2 text-white/50 hover:text-white transition-colors cursor-pointer"
+          className="p-2 text-white/50 hover:text-white transition-colors cursor-pointer flex-shrink-0"
           title="Toggle Theme"
         >
           {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
@@ -75,22 +75,52 @@ export const Navbar = () => {
         <div className="relative flex items-center">
           <AnimatePresence>
             {isSearchOpen && (
-              <motion.form
-                initial={{ width: 0, opacity: 0 }}
-                animate={{ width: 220, opacity: 1 }}
-                exit={{ width: 0, opacity: 0 }}
-                onSubmit={handleSearchSubmit}
-                className="overflow-hidden mr-2"
-              >
-                <input
-                  type="text"
-                  placeholder="Search events..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 rounded-full px-4 py-1.5 text-sm focus:outline-none focus:border-white/30 text-white placeholder:text-white/30"
-                  autoFocus
-                />
-              </motion.form>
+              <>
+                {/* Mobile Full Navbar Search Overlay */}
+                <motion.form
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                  onSubmit={handleSearchSubmit}
+                  className="fixed sm:hidden top-0 left-0 right-0 h-[72px] z-[60] flex items-center px-6 bg-black/90 backdrop-blur-xl border-b border-white/10"
+                >
+                  <Search size={20} className="text-white/50 mr-3 flex-shrink-0" />
+                  <input
+                    type="text"
+                    placeholder="Search events..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="flex-1 bg-transparent border-none text-white focus:outline-none placeholder:text-white/30 text-base py-2 w-full"
+                    autoFocus
+                  />
+                  <button
+                    type="button"
+                    onClick={handleSearchToggle}
+                    className="p-2 -mr-2 text-white/50 hover:text-white transition-colors ml-2 flex-shrink-0"
+                  >
+                    <X size={20} />
+                  </button>
+                </motion.form>
+
+                {/* Desktop/Tablet Inline Search */}
+                <motion.form
+                  initial={{ width: 0, opacity: 0 }}
+                  animate={{ width: "auto", opacity: 1 }}
+                  exit={{ width: 0, opacity: 0 }}
+                  onSubmit={handleSearchSubmit}
+                  className="hidden sm:block overflow-hidden relative"
+                >
+                  <input
+                    type="text"
+                    placeholder="Search..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-[200px] md:w-[220px] mr-2 bg-white/5 border border-white/10 rounded-full px-4 py-1.5 text-sm focus:outline-none focus:border-white/30 text-white placeholder:text-white/30"
+                    autoFocus
+                  />
+                </motion.form>
+              </>
             )}
           </AnimatePresence>
           <button
@@ -98,22 +128,24 @@ export const Navbar = () => {
             className="p-2 text-white/50 hover:text-white transition-colors cursor-pointer flex-shrink-0"
             title="Search"
           >
-            {isSearchOpen ? <X size={20} /> : <Search size={20} />}
+            {isSearchOpen ? <X size={20} className="hidden sm:block" /> : <Search size={20} />}
+            {isSearchOpen && <Search size={20} className="sm:hidden" />}
           </button>
         </div>
         <Link
           to="/host"
-          className="hidden sm:flex items-center gap-2 px-4 py-2 bg-white text-black rounded-full text-sm font-medium hover:bg-white/90 transition-all active:scale-95"
+          className="flex items-center justify-center gap-2 w-[36px] h-[36px] sm:w-auto sm:h-auto sm:px-4 sm:py-2 bg-white text-black rounded-full text-sm font-medium hover:bg-white/90 transition-all active:scale-95 flex-shrink-0"
+          title="Host Event"
         >
-          <Plus size={16} />
-          <span>Host Event</span>
+          <Plus size={18} className="sm:w-4 sm:h-4 flex-shrink-0" />
+          <span className="hidden sm:block">Host Event</span>
         </Link>
         <Link
           to="/schedule"
           title="Profile & My Schedule"
-          className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center overflow-hidden bg-white/5 hover:bg-white/10 transition-colors cursor-pointer"
+          className="w-[36px] h-[36px] sm:w-10 sm:h-10 rounded-full border border-white/10 flex items-center justify-center overflow-hidden bg-white/5 hover:bg-white/10 transition-colors cursor-pointer flex-shrink-0"
         >
-          <User size={20} className="text-white/50 hover:text-white transition-colors" />
+          <User size={18} className="text-white/50 hover:text-white transition-colors sm:w-5 sm:h-5" />
         </Link>
       </div>
     </nav>
