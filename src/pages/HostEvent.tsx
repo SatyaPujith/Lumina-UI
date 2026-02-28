@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
 import { useEvents } from '../context/EventContext';
-import { ArrowLeft, Upload, MapPin, Calendar, Tag, Info } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
+import { ArrowLeft, Upload, MapPin, Calendar, Tag, Info, ChevronDown } from 'lucide-react';
 
 export const HostEvent = () => {
   const navigate = useNavigate();
   const { addEvent } = useEvents();
+  const { theme } = useTheme();
+  const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     type: 'Workshop',
@@ -94,26 +97,55 @@ export const HostEvent = () => {
                 <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">Category</label>
                 <div className="relative">
                   <Tag className="absolute left-0 top-1/2 -translate-y-1/2 text-white/20" size={18} />
-                  <select
-                    className="w-full bg-transparent border-b border-white/10 py-4 pl-8 text-lg focus:outline-none focus:border-white transition-colors appearance-none"
-                    value={formData.type}
-                    onChange={e => setFormData({ ...formData, type: e.target.value })}
+                  <div
+                    className={`w-full bg-transparent border-b border-white/10 py-4 pl-8 text-lg cursor-pointer flex items-center justify-between transition-colors ${isCategoryOpen ? 'border-white' : 'hover:border-white/50'}`}
+                    onClick={() => setIsCategoryOpen(!isCategoryOpen)}
                   >
-                    {['Workshop', 'Music', 'Sports', 'Meetup', 'Social', 'Entertainment', 'Fitness'].map(t => (
-                      <option key={t} value={t} className="bg-neutral-900">{t}</option>
-                    ))}
-                  </select>
+                    <span>{formData.type || 'Select Category'}</span>
+                    <motion.div
+                      animate={{ rotate: isCategoryOpen ? 180 : 0 }}
+                      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                    >
+                      <ChevronDown size={18} className="text-white/40" />
+                    </motion.div>
+                  </div>
+
+                  <AnimatePresence>
+                    {isCategoryOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                        transition={{ duration: 0.2 }}
+                        className="absolute w-full mt-2 bg-black/90 backdrop-blur-xl border border-white/20 rounded-2xl overflow-hidden z-50 shadow-2xl"
+                      >
+                        {['Workshop', 'Music', 'Sports', 'Meetup', 'Social', 'Entertainment', 'Fitness'].map(t => (
+                          <div
+                            key={t}
+                            className={`px-6 py-4 cursor-pointer transition-colors hover:bg-white/10 text-base ${formData.type === t ? 'bg-white/5 text-white font-medium' : 'text-white/70'}`}
+                            onClick={() => {
+                              setFormData({ ...formData, type: t });
+                              setIsCategoryOpen(false);
+                            }}
+                          >
+                            {t}
+                          </div>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               </div>
 
               <div className="space-y-2">
                 <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">Date</label>
-                <div className="relative">
-                  <Calendar className="absolute left-0 top-1/2 -translate-y-1/2 text-white/20" size={18} />
+                <div className="relative flex items-center">
+                  <Calendar className={`absolute left-0 pointer-events-none transition-colors z-10 ${formData.date ? 'text-white/40' : 'text-white/20'}`} size={18} />
                   <input
                     required
                     type="date"
-                    className="w-full bg-transparent border-b border-white/10 py-4 pl-8 text-lg focus:outline-none focus:border-white transition-colors"
+                    style={{ colorScheme: theme }}
+                    className={`w-full bg-transparent border-b border-white/10 py-4 pl-8 pr-4 text-lg focus:outline-none focus:border-white transition-colors cursor-pointer appearance-none relative [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:z-20 ${formData.date ? 'text-white' : 'text-white/40'}`}
                     value={formData.date}
                     onChange={e => setFormData({ ...formData, date: e.target.value })}
                   />
