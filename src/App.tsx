@@ -32,8 +32,14 @@ export default function App() {
             <footer className="py-20 px-6 border-t border-white/5 mt-20">
               <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
                 <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 bg-white rounded-full" />
-                  <span className="text-lg font-medium tracking-tighter serif italic">Lumina</span>
+                  <motion.div
+                    initial={{ rotate: -10 }}
+                    animate={{ rotate: 0 }}
+                    className="w-8 h-8 bg-white rounded-full flex items-center justify-center"
+                  >
+                    <div className="w-4 h-4 bg-black rounded-full" />
+                  </motion.div>
+                  <span className="text-xl font-medium tracking-tighter serif italic">Lumina</span>
                 </div>
                 <p className="text-white/30 text-xs uppercase tracking-widest">
                   © 2026 Lumina Experiences. All rights reserved.
